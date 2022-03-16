@@ -1,0 +1,92 @@
+compilers:
+- compiler:
+    environment: {}
+    extra_rpaths:
+    - /projects/global/toss3/compilers/intel/intel_2019/compilers_and_libraries_2019.3.199/linux/compiler/lib/intel64
+    modules: [sierra-compiler/intel/19.0.3]
+    flags: {}
+    operating_system: rhel7
+    paths:
+      cc: /projects/global/toss3/compilers/intel/intel_2019/compilers_and_libraries_2019.3.199/linux/bin/intel64/icc
+      cxx: /projects/global/toss3/compilers/intel/intel_2019/compilers_and_libraries_2019.3.199/linux/bin/intel64/icpc
+      f77: /projects/global/toss3/compilers/intel/intel_2019/compilers_and_libraries_2019.3.199/linux/bin/intel64/ifort
+      fc: /projects/global/toss3/compilers/intel/intel_2019/compilers_and_libraries_2019.3.199/linux/bin/intel64/ifort
+    spec: intel@19.0.3.199
+    target: x86_64
+- compiler:
+    environment: {}
+    extra_rpaths:
+    - /opt/rh/devtoolset-8/root/usr/lib64
+    - /lib64
+    modules: []
+    flags: {}
+    operating_system: rhel7
+    paths:
+      cc: /opt/rh/devtoolset-8/root/usr/bin/gcc
+      cxx: /opt/rh/devtoolset-8/root/usr/bin/g++
+      f77: /opt/rh/devtoolset-8/root/usr/bin/gfortran
+      fc: /opt/rh/devtoolset-8/root/usr/bin/gfortran
+    spec: gcc@8.3.1
+    target: x86_64
+repos:
+- $spack/../repos/cmb
+packages:
+  all:
+    permissions:
+      read: group
+      group: wg-sierra-users
+    compiler:
+    - intel@19.0.3.199
+    - gcc@8.3.1
+    providers:
+      mpi:
+      - openmpi
+      blas: [netlib-lapack]
+      lapack: [netlib-lapack]
+    variants: +mpi build_type=Release
+  boost:
+    version: [1.68.0]
+    variants: cxxstd=14
+  openmpi:
+    version: [4.0.5]
+    variants: fabrics=auto schedulers=auto
+  pkg-config:
+    buildable: false
+    externals:
+    - spec: pkg-config@0.27.1
+      prefix: /usr/bin/pkg-config
+  openssl:
+    version: [1.0.2]
+    buildable: false
+    externals:
+    - spec: openssl@1.0.2
+      prefix: /usr
+  ncurses:
+    version: [5.9]
+    buildable: false
+    externals:
+    - spec: ncurses@5.9
+      prefix: /usr
+  ninja:
+    'externals:':
+    - spec: ninja@1.10.1
+      modules:
+      - cde/v2/ninja/1.10.1
+  #qt:
+  #  version: [5.12.10]
+  hdf5:
+    version: [1.10.8]
+    variants: +mpi+cxx+hl
+  binutils:
+    version: [2.37]
+    variants: +ld
+  paraview:
+    version: [5.9.1]
+    variants: +python3~python+mpi+osmesa+hdf5+shared+update+qt
+config:
+  build_jobs: 8
+  source_cache: ~/.spack/downloads
+  misc_cache: $spack/../cache
+  build_stage:
+  - $spack/../stage
+  concretizer: clingo
